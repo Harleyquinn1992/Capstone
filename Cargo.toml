@@ -1,0 +1,12 @@
+[package]
+name = "project"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+iced = "0.12.1"
+cpal = "0.15"
+whisper-rs = "0.14.2"
+
+[build-dependencies]
+whisper-rs-sys = "0.12.1"
