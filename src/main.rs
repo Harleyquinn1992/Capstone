@@ -1,4 +1,4 @@
-use iced::{alignment, Application, Command, Element, Length, Settings, Theme};
+use iced::{alignment, Application, Command, Element, Length, Settings, Theme, Size, mouse, event, Event};
 use iced::widget::{container, text, button, row, column};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use std::sync::{Arc, Mutex};
@@ -6,12 +6,14 @@ use std::thread;
 use whisper_rs::{WhisperContext, WhisperContextParameters, FullParams, SamplingStrategy};
 use iced::futures::stream::StreamExt;  // Required for rx.next()
 use iced::window::Level;
+use iced::window;
 
 // App state
 struct SubWave {
     is_capturing: bool,
     audio_buffer: Arc<Mutex<Vec<f32>>>,
     latest_transcription: String,
+    drag_origin: Option<(f64, f64)>,
 }
 
 #[derive(Debug, Clone)]
@@ -19,6 +21,10 @@ enum Message {
     StartCapture,
     StopCapture,
     TranscriptionUpdate(String),
+    StartWindowDrag(f64,f64),
+    DragWindow(f64, f64),
+    EndWindowDrag,
+    None,
 }
 
 impl Default for SubWave {
@@ -26,7 +32,8 @@ impl Default for SubWave {
         Self {
             is_capturing: false,
             audio_buffer: Arc::new(Mutex::new(Vec::new())),
-            latest_transcription: String::new(),  // Initialize 
+            latest_transcription: String::new(),
+            drag_origin: None,
         }
     }
 }
@@ -94,9 +101,28 @@ impl Application for SubWave {
             Message::TranscriptionUpdate(text) => {
                 self.latest_transcription = text;
             }
+            Message::StartWindowDrag(_,_) => {
+                self.drag_origin = Some((0.0,0.0)); // Reset start point
+            }
+            Message::DragWindow(x, y) => {
+                if let Some((origin_x, origin_y)) = self.drag_origin {
+                    let delta_x = x - origin_x; // Calculate the change in X
+                    let delta_y = y - origin_y; // Calculate the change in Y
+    
+                    // Move the window to the new position
+                    return iced::window::move_to(
+                        iced::window::Id::MAIN,
+                        iced::Point::new(delta_x as f32, delta_y as f32),
+                    );                    
+                }
+            }
+            Message::EndWindowDrag => {
+                self.drag_origin = None;
+            }
+            Message::None => {}
         }
         Command::none()
-    }    
+    }
 
     fn view(&self) -> Element<Self::Message> {
         let subtitle_box = container(
@@ -156,8 +182,25 @@ impl Application for SubWave {
             .into()
     }           
 
-    fn theme(&self) -> iced::Theme {
-        iced::Theme::Dracula
+    // fn theme(&self) -> iced::Theme {
+    //     iced::Theme::Dracula
+    // }
+    fn subscription(&self) -> iced::Subscription<Self::Message> {
+        iced::event::listen().map(|event| match event {
+            Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
+                // If the left button is pressed, we need to get the current cursor position
+                Message::StartWindowDrag(0.0, 0.0) // Placeholder to set on button press
+            }
+            Event::Mouse(mouse::Event::CursorMoved { position }) => {
+                // Update the window position while dragging
+                Message::DragWindow(position.x.into(), position.y.into())
+            }
+            Event::Mouse(mouse::Event::ButtonReleased(mouse::Button::Left)) => {
+                // End dragging when the mouse button is released
+                Message::EndWindowDrag
+            }
+            _ => Message::None,
+        })
     }
 }
 
@@ -246,6 +289,7 @@ fn transcribe_audio(
 pub fn main() -> iced::Result {
     SubWave::run(Settings {
         window: iced::window::Settings {
+            size: Size::new(800.0,170.0),
             decorations: false,    // Remove window frame
             transparent: true,     // Make window background transparent
             level: Level::AlwaysOnTop,
