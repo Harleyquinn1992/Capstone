@@ -43,6 +43,14 @@ fn translucent_container_theme(_theme: &iced::Theme) -> iced::widget::container:
     }
 }
 
+fn container_theme(_: &iced::Theme) -> iced::widget::container::Appearance {
+    iced::widget::container::Appearance {
+        background: Some(iced::Background::Color(iced::Color::from_rgba(0.0, 0.0, 0.0, 0.0))), //transparent
+        border: iced::Border::default(),
+        ..Default::default()
+    }
+}
+
 impl Application for SubWave {
     type Executor = iced::executor::Default;
     type Message = Message;
@@ -142,10 +150,7 @@ impl Application for SubWave {
         container(layout)
             .width(Length::Fill)
             .height(Length::Fill)
-            .style(iced::theme::Container::Custom(Box::new(|_theme| iced::widget::container::Appearance {
-                background: Some(iced::Background::Color(iced::Color::from_rgb8(10, 15, 40))),
-                ..Default::default()
-            })))
+            .style(iced::theme::Container::Custom(Box::new(container_theme)))
             .center_x()
             .align_y(alignment::Vertical::Bottom)
             .into()
