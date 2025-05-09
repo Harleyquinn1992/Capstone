@@ -42,11 +42,18 @@ If you don't see subtitles:
 - Go to your system sound settings
 - Enable a device like “Stereo Mix” or install a virtual audio cable
 
-## “Why am I checking for device names like 'Stereo Mix' or 'Loopback' with hardcoded strings?”
-I use device name matching because there’s no reliable cross-platform way (or I just do not know how to) to detect which input device is capturing system audio output — meaning, what's actually playing on the speakers — as opposed to something like a microphone.
+## “Why am I using device name checking?”
+Currently, there’s no universal, cross-platform way to reliably detect the exact audio output device playing your system’s audio programmatically.
 
-Devices like ‘Stereo Mix,’ ‘Loopback,’ or ‘Virtual Cable’ are commonly used by audio drivers to mirror system output. These names are used by Realtek, VoiceMeeter, and other audio routing tools.
+By explicitly checking for common keywords such as HDMI, Digital, or Display in audio device names, SubWave intelligently selects the best available output device likely capturing the desired audio stream.
 
-By checking for keywords like ‘stereo,’ ‘loopback,’ or ‘virtual,’ my app can prioritize the input devices most likely to provide system audio, even when multiple devices are available.
+This heuristic approach is lightweight, efficient, and has proven effective across most practical scenarios. Additionally, SubWave always provides a fallback to the default audio output device, ensuring robust behavior.
 
-It’s not perfect, but it’s a lightweight and effective method that works in most real-world scenarios, and I included a fallback to the default input device in case none are matched.”
+## Technical Details
+* Framework: Rust with Iced for UI
+
+* Audio Capture: cpal crate using WASAPI loopback
+
+* Transcription Engine: Whisper (using whisper-rs)
+
+* UI Design: Dracula Theme, draggable floating window for subtitles.
