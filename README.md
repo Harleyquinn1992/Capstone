@@ -1,2 +1,52 @@
-# Capstone
-CSCI 490 Capstone CSUCHICO 2025
+# CSCI 490 Capstone CSUCHICO 2025
+
+# SubWave - Real-time Audio Transcription
+
+### Hi
+* My name is Dinh Thien Tu Tran and this is my capstone project.
+
+## Introduction
+
+SubWave is an application designed to help individuals with hearing impairments by providing real-time subtitles for any audio played on their system. By capturing the system's audio output and using Whisper's transcription capabilities, SubWave generates live subtitles that appear on your screen as you listen to music, videos, podcasts, or any other audio.
+
+## Features
+- Real-time audio capture: SubWave listens to your system's audio and transcribes it into subtitles as you play any audio.
+
+- Real-time transcription: As audio is captured, SubWave processes the audio using Whisper's ASR (Automatic Speech Recognition) engine and shows the transcribed text on your screen.
+
+- Subtitles display: Subtitles are displayed in a floating window that you can drag around the screen.
+
+- Toggle transcription: You can start or stop the transcription by clicking a toggle button.
+
+- Clear subtitles: You can clear the subtitles at any time using a clear button.
+
+
+## How SubWave Selects Audio Input
+
+SubWave uses the WASAPI loopback method (Windows Audio Session API) provided by the cpal crate to directly capture audio from your system's output devices (such as HDMI, external speakers, or built-in speakers).
+
+Specifically, it automatically scans available output devices and prioritizes names containing keywords:
+
+- '"hdmi"'
+
+- '"digital"'
+
+- '"display"'
+
+If no suitable HDMI or external output device is detected, SubWave gracefully defaults to your system’s primary audio output device (e.g., laptop speakers or built-in audio devices).
+
+Example console output when running SubWave:
+
+### Troubleshooting
+If you don't see subtitles:
+- Go to your system sound settings
+- Enable a device like “Stereo Mix” or install a virtual audio cable
+
+## “Why am I checking for device names like 'Stereo Mix' or 'Loopback' with hardcoded strings?”
+I use device name matching because there’s no reliable cross-platform way (or I just do not know how to) to detect which input device is capturing system audio output — meaning, what's actually playing on the speakers — as opposed to something like a microphone.
+
+Devices like ‘Stereo Mix,’ ‘Loopback,’ or ‘Virtual Cable’ are commonly used by audio drivers to mirror system output. These names are used by Realtek, VoiceMeeter, and other audio routing tools.
+
+By checking for keywords like ‘stereo,’ ‘loopback,’ or ‘virtual,’ my app can prioritize the input devices most likely to provide system audio, even when multiple devices are available.
+
+It’s not perfect, but it’s a lightweight and effective method that works in most real-world scenarios, and I included a fallback to the default input device in case none are matched.”
