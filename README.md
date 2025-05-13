@@ -3,7 +3,7 @@
 # SubWave - Real-time Audio Transcription
 
 ### Hi
-* My name is Dinh Thien Tu Tran and this is my capstone project.
+My name is Dinh Thien Tu Tran and this is my capstone project.
 
 ## Introduction
 
