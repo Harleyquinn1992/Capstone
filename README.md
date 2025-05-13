@@ -57,3 +57,5 @@ This heuristic approach is lightweight, efficient, and has proven effective acro
 * Transcription Engine: Whisper (using whisper-rs)
 
 * UI Design: Dracula Theme, draggable floating window for subtitles.
+
+![Capstone Poster](C:\Users\greddykp88\Downloads\Captstone\Capstone\Capstone2.png)
