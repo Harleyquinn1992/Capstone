@@ -59,3 +59,13 @@ This heuristic approach is lightweight, efficient, and has proven effective acro
 * UI Design: Dracula Theme, draggable floating window for subtitles.
 
 ![Capstone Poster](<Capstone2.png>)
+
+## How to run
+I am currently using Windows 11, so the way I run the program is go to System->Sound->More Sound Settings->Recording and pick Stereo Mix as default audio device.
+This ensure that SubWave will take audio data from the built-in stereo, not the built-in microphone.
+
+![Set Default Audio](<SetAudio.png>)
+
+Clone the repository and type this to command line:
+
+cargo run
